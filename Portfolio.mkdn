@@ -1,0 +1,196 @@
+# 포트폴리오
+EDCAN 포트폴리오 - 10514 Junseok Oh
+
+--------------
+소개
+=====
+* 선린인터넷고등학교 웹운영과 1학년 5반
+* EDCAN 안드로이드 프로그래머
+* 잉여
+* 쥬금
+
+목차
+=====
+* 교내 활동
+* 교외 활동
+* 그 외 활동
+
+교내 활동
+=====
+### 선린 모바일 콘텐츠 경진대회 Bill.IM
+
+* 학교, 회사와 같은 일정한 그룹 내에서 내가 필요한 물건은 다른 동료나 친구에게 빌려달라고 부탁하거나 또는 내가 빌려줄수 있고, 간단한 물물거래를 도와줄 수 있는 빌림 중계 어플리케이션입니다.
+* 안드로이드 어플리케이션 프로그래머로 참여하였습니다.
+
+핵심 소스코드
+* 서버와의 HTTP 통신에는 Retrofit 을 이용했습니다. 서버와의 통신을 하기 위해 이용되는 함수들입니다.
+```java
+/**
+ * Created by kotohana5706 on 15. 7. 12.
+ */
+public interface BillimService {
+    @FormUrlEncoded
+    @POST("/api/auth/facebook/token")
+    void loginByFacebook(@Field("access_token") String token, Callback<User> callback);
+
+    @FormUrlEncoded
+    @POST("/api/auth/logout")
+    void logout(@Field("apikey") String apikey, Callback callback);
+
+   // 중략 
+    @FormUrlEncoded
+    @POST("/api/user/self/delete")
+    void deleteAccount(@Field("apikey") String apikey, Callback callback);
+
+    @FormUrlEncoded
+    @POST("/api/article/self/list")
+    void articleSelfList(@Field("apikey") String apikey, @Field("group") int id, Callback<List<Article>> callback);
+```
+* 액티비티 내에서 다음과 같이 구현하였습니다.
+```java
+   RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://billim.kkiro.kr")
+                .build();
+   service = restAdapter.create(BillimService.class);
+   service.postArticle(apikey, sharedPreferences.getInt("currentgroup",1), shareType_int, category, item_name, item_comment, item_reward, item_place, (!picturePath.equals("")) ? new TypedFile("image/jpeg", new File(picturePath)) : null, new Callback<Article>() {
+                    @Override
+                    public void success(Article article, Response response) {
+                        progressDialog.dismiss();
+                        finish();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        int errorcode = error.getResponse().getStatus();
+                        ShortToast("에러 " + errorcode);
+                        Log.e("error", error.getCause().toString());
+                        if (errorcode == 200) finish();
+                    }
+                });
+```
+### 제 1회 선린 해커톤 Familing
+
+* 평소에 서로 소통하지 못하거나 문제가 있었던 가정을 위해 만들어진 가족 친화 SNS 프로젝트! Familing입니다.
+* 안드로이드 어플리케이션 프로그래머로 참여하였습니다.
+
+핵심 소스코드
+* 서버와의 HTTP 통신에는 동일하게 Retrofit 을 이용했습니다. 서버와의 통신을 하기 위해 이용되는 함수들입니다.
+```java /**
+ * Created by kotohana5706 on 15. 7. 12.
+ */
+public interface FamilingService {
+    @FormUrlEncoded
+    @POST("/api/auth/login")
+    public void login(@Field("username") String username, @Field("password") String password, Callback<User> callback);
+
+    @FormUrlEncoded
+    @POST("/api/auth/register")
+    public void register(@Field("username") String username, @Field("password") String password, @Field("name") String name, Callback<User> callback);
+
+    @GET("/api/auth/logout")
+    public void logout(Callback callback);
+
+    @FormUrlEncoded
+    @POST("/api/user/self/gcm")
+    public void setGcm(@Field("gcm") String gcm, Callback<User> callback);
+
+    //중략 
+    
+    @Multipart
+    @POST("/api/article/self/create")
+    public void postArticle(@Part("type") int type, @Part("name") String name,
+                            @Part("description") String description, @Part("tagged") List<Integer> tagged,
+                            @Part("voteEntries") List<String> voteEntries, @Part("canAdd") boolean a, @Part("photo") TypedFile photo,  Callback<Group> callback);
+
+    @GET("/api/article/listByUsers")
+    public void groupListByUsers(Callback<List<BaseUser>> callback);
+}
+```
+* 액티비티 내에서 다음과 같이 구현하였습니다.
+* 메인 액티비티 내에서 가족 구성원 수만큼의 페이지를 ViewPager로 구현하였습니다.
+```java
+    public void setDefault() {
+        service = FamilingConnector.getInstance();
+        floatingActionsMenu = (FloatingActionsMenu)findViewById(R.id.float_menu);
+        post1 = (FloatingActionButton) findViewById(R.id.post1);
+        post2 = (FloatingActionButton) findViewById(R.id.post2);
+        post3 = (FloatingActionButton) findViewById(R.id.post3);
+        post4 = (FloatingActionButton) findViewById(R.id.post4);
+        drawerListview = (ListView) findViewById(R.id.drawer_listview);
+        mPager = (ViewPager) findViewById(R.id.ViewPager);
+        service.groupListByUsers(new Callback<List<BaseUser>>() {
+            @Override
+            public void success(List<BaseUser> users, Response response) {
+                mPager.setAdapter(new PagerAdapterClass(MainActivity.this, users));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                // Crash
+                Log.e("Network", error.getMessage());
+            }
+        });
+    }
+
+```
+
+* 이번 프로젝트에서는 코드의 간결함을 위해 커스텀 클래스를 하나 만들어서 사용하였습니다.
+```java
+/**
+ * Created by kotohana-laptop on 15. 7. 20.
+ */
+public class FamilingConnector {
+
+    private static FamilingService instance;
+    private static SharedPreferences sharedPreferences;
+    private static String apikey;
+
+    public static FamilingService getInstance() {
+        if(instance != null) return instance;
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://familing.kkiro.kr")
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        // Inject API Key
+                        request.addQueryParam("apikey", apikey);
+                    }
+                })
+                .build();
+        instance = restAdapter.create(FamilingService.class);
+        return instance;
+    }
+
+    public static void setApiKey(String key) {
+        apikey = key;
+    }
+
+    public static String getApiKey() {
+        return apikey;
+    }
+
+    private static SharedPreferences getSharedPreferences(Context context) {
+        if(sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences("authkeys", 0);
+        }
+        return sharedPreferences;
+    }
+
+    public static void loadApiKey(Context context) {
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+       apikey = sharedPreferences.getString("apikey", "");
+    }
+
+    public static void saveApiKey(Context context, String key) {
+        apikey = key;
+        saveApiKey(context);
+    }
+
+    public static void saveApiKey(Context context){
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        sharedPreferences.edit().putString("apikey", apikey).commit();
+    }
+
+}
+```
+
