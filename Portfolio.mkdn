@@ -6,20 +6,14 @@ EDCAN 포트폴리오 - 10514 Junseok Oh
 =====
 * 선린인터넷고등학교 웹운영과 1학년 5반
 * EDCAN 안드로이드 프로그래머
-* 잉여
-* 쥬금
+* EDCAN 2015년, 2016년도 부부장
 
-목차
-=====
-* 교내 활동
-* 교외 활동
-* 그 외 활동
-
-교내 활동
+활동 내용
 =====
 ### 선린 모바일 콘텐츠 경진대회 Bill.IM
 
 * 학교, 회사와 같은 일정한 그룹 내에서 내가 필요한 물건은 다른 동료나 친구에게 빌려달라고 부탁하거나 또는 내가 빌려줄수 있고, 간단한 물물거래를 도와줄 수 있는 빌림 중계 어플리케이션입니다.
+* 안드로이드 클라이언트와 Node.JS단 서버의 연동의 이루어진 프로젝트입니다.
 * 안드로이드 어플리케이션 프로그래머로 참여하였습니다.
 
 핵심 소스코드
@@ -72,10 +66,12 @@ public interface BillimService {
 
 * 평소에 서로 소통하지 못하거나 문제가 있었던 가정을 위해 만들어진 가족 친화 SNS 프로젝트! Familing입니다.
 * 안드로이드 어플리케이션 프로그래머로 참여하였습니다.
+* 안드로이드 클라이언트와 Node.JS단 서버의 연동의 이루어진 프로젝트입니다.
+
 
 핵심 소스코드
 * 서버와의 HTTP 통신에는 동일하게 Retrofit 을 이용했습니다. 서버와의 통신을 하기 위해 이용되는 함수들입니다.
-* 
+
 ```java 
 /**
  * Created by kotohana5706 on 15. 7. 12.
@@ -199,3 +195,302 @@ public class FamilingConnector {
 }
 ```
 
+### 제 8회 AppJam PaperCrane
+
+* 사랑하는이, 고마운 이에게 고마운 마음을 여러 차례에 걸쳐 짧은 편지 쓰고 정해진 날짜에 편지들을 전해주는 앱입니다
+* 안드로이드 클라이언트에서 개발이 진행되었습니다.
+* 안드로이드 어플리케이션 프로그래머, UI 디자이너로 참여하였습니다.
+
+핵심 소스코드
+* DB 저장이 미숙하던 시절이라, 데이터 저장에는 SharedPreferences를 사용하였습니다.
+```java
+SharedPreferences sharedPreferences;
+SharedPreferences.Editor editor;
+editor = sharedPreferences.edit();
+confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int count = sharedPreferences.getInt("count", 0);
+                String titleString = title.getText().toString().trim();
+                String messageString = message.getText().toString().trim();
+                if(!titleString.equals("")&&!messageString.equals("")){
+                    editor.putString("title"+count, titleString);
+                    editor.putString("description"+count, messageString);
+                    editor.putString("writedate" + count, "20150726");
+                    editor.putInt("count", count+1);
+                    editor.commit();
+                    finish();
+                }
+            }
+        });
+```
+
+### 선린 디지털 콘텐츠 경진대회 Knock
+
+* NFC태그기를 이용해 카드를 태그하여 쉽게 프로그램을 잠그고 해제할 수 있는 PC 어플리케이션으로, PC말고도 웹과 안드로이드에서도 제어할 수 있는 프로그램입니다.
+* 안드로이드 클라이언트, C++ 기반 WIndows 응용 프로그램, 웹, Node.JS단의 서버와의 연동이 이루어진 프로젝트입니다.
+* 안드로이드 어플리케이션 프로그래머로 참여하였습니다.
+
+핵심 소스코드
+* 안드로이드 클라이언트에서는 PC에서 서버에 전송된 현재 실행 프로그램 목록을 불러와 표시해주며, 제어 기능이 제공됩니다..
+```java
+    private void setRestAdapter() {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://grooshbene.milkgun.kr:80")
+                .build();
+        service = restAdapter.create(NetworkInterface.class);
+        sh = getSharedPreferences("Knock", 0);
+        editor = sh.edit();
+    }
+    
+   private void setData() {
+        arrayList = new ArrayList<>();
+        service.listArticle(new Callback<List<Article>>() {
+            @Override
+            public void success(List<Article> articles, Response response) {
+                String array[] = articles.get(0).prg_name.split(",");
+                if (array.length != 0) {
+                    for (int i = 1; i < array.length; i++) {
+                        Log.e("array", array[i]);
+                        arrayList.add(new ListData(array[i]));
+                    }
+                    adapter = new DataAdapter(MainActivity.this, arrayList);
+                    listview.setAdapter(adapter);
+                } else textView.setText("제어 가능한 어플리케이션이 없습니다!");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+ }
+```
+
+### 삼성 주니어 소프트웨어 창작대회 오늘의 어린이상
+
+* 부모와 자녀 간의 소통을 위한 칭찬스티커판 어플리케이션으로, 부모는 아이에게 시킬 일들을, 자녀는 부모에게 하고싶은 일들을 이야기 해 서로의 목적을 이뤄줄 수 있도록 해주는 어플리케이션입니다.
+* 안드로이드 클라이언트, Node.JS단 서버의 연동이 이루어진 프로젝트입니다.
+* 안드로이드 어플리케이션 프로그래머, 서버 프로그래머로 참여하였습니다.
+
+핵심 소스코드 (안드로이드)
+
+* 안드로이드 클라이언트에서 게시글을 작성하는 부분입니다.
+```java
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.confirm_add:
+                if(!timeSettings)
+                    Toast.makeText(AddAchievementActivity.this, "시간 설정을 완료해주세요!", Toast.LENGTH_SHORT).show();
+                else {
+                    getTitle = title.getText().toString().trim();
+                    getContent = content.getText().toString().trim();
+                    getWhen = year + "년 " + month + "월 " + day + "일 " + hour + "시 " + minute + "분";
+                    if (getTitle.equals("")) title.setError("과제 제목을 입력해주세요!");
+                    else if (getContent.equals("")) content.setError("목표 내용을 입력해주세요!");
+                    else {
+                        new MaterialDialog.Builder(AddAchievementActivity.this)
+                                .title("다시 한번 확인해주세요!")
+                                .content(
+                                        "[" + getTitle + "]\n"
+                                                + getContent + "\n"
+                                                + "칭찬스티커 " + reward + "개\n\n"
+                                                + "기한 : "+getWhen+"\n"
+                                                + "위 정보로 과제를 등록합니다."
+                                )
+                                .theme(Theme.LIGHT)
+                                .positiveText("등록")
+                                .negativeText("취소")
+                                .negativeColor(Color.parseColor("#8B8B8B"))
+                                .positiveColor(Color.parseColor("#F499B8"))
+                                .callback(new MaterialDialog.ButtonCallback() {
+                                    @Override
+                                    public void onPositive(MaterialDialog dialog) {
+                                        super.onPositive(dialog);
+                                        date = year+"-"+month+"-"+day+" "+hour+":"+minute;
+                                        postArticle();
+                                    }
+                                })
+                                .show();
+
+                    }
+                }
+        }
+    }
+    public void postArticle(){
+        service.postArticle(API_KEY, getTitle, Integer.parseInt(picker_count.getText().toString()), date, getContent, new Callback<Article>() {
+            @Override
+            public void success(Article article, Response response) {
+                Toast.makeText(AddAchievementActivity.this, "과제가 등록되었습니다!", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+ }
+```
+
+* 서버에서 데이터를 받아 저장하거나, 게시글을 전송해주는 부분입니다.
+
+```javascript
+var express = require('express');
+var mongo = require('../mongo');erver_api_key);
+var registrationIds = [];
+module.exports = router;
+
+router.post('/postArticle', function(req, res){
+  var apikey = req.body.apikey;
+  var title = req.body.title;
+  var sticker = req.body.sticker;
+  var reqDate = req.body.date; // 2015-01-01 12:30
+  var articleKey = randomstring.generate();
+  var content = req.body.content;
+
+  var date = new Date(reqDate);
+  var year = date.getFullYear();
+  var month = date.getMonth()+1;
+  var day = date.getDate();
+  var hour = date.getHours();
+  var minute = date.getMinutes();
+  console.log(date);
+  var article = new mongo.Article({
+    title : title,
+    date : date,
+    dateType : {
+      year : year,
+      month : month,
+      day : day,
+      hour : hour,
+      minute : minute
+    },
+    alertTime : undefined,
+    apikey : apikey,
+    content : content,
+    sticker : sticker,
+    articleKey : articleKey,
+    status : 'working',
+    waiting : false
+  });
+  article.save(function(err){
+    if(err) res.sendStatus(400);
+    else {
+      console.log(article);
+      res.send(article);
+    }
+  });
+});
+
+router.post('/listArticle', function(req, res){
+  var nowStat = req.body.nowStat;
+  var apikey = req.body.targetApikey;
+  mongo.Article.find('{ status : nowStat }', function(err, docs){
+    if(docs.length==0) res.sendStatus(400);
+    else res.send(docs);
+    });
+});
+```
+
+### 2015 함께서울 앱 공모전 I.LOST.U
+
+* 서울시에서 제공하는 대중교통 분실물 목록 및 검색 오픈API를 사용하여 분실물을 쉽게 찾을 수 있도록 도와주는 앱
+* 안드로이드 클라이언트에서 작동하는 프로그램입니다.
+* 안드로이드 어플리케이션 프로그래머로 참여하였습니다.
+
+### 제 9회 AppJam ME_RROR
+
+* 이상한 나라 속의 사람들을 위한 앱이라는 주제와 적합하게 이상한 나라 속의 또다른 나와 만날 수 있게 해주고, 서로 채팅이 가능하게 해주는 어플리케이션
+* 안드로이드 클라이언트, Node.JS단 서버의 연동이 이루어진 프로젝트입니다.
+* 안드로이드 어플리케이션 프로그래머, 서버 프로그래머로 참여하였습니다.
+
+### 강원도 공공데이터 활용 창업 앱 공모전 효돌이
+
+* 따로 떨어져 사시는 부모님과 자녀를 위해 서로 소통을 자주 할 수 있도록 도와주고, 부모님을 위한 병원 또는 물건들을 추천해주는 어플리케이션
+* 안드로이드 클라이언트, Node.JS단 서버의 연동이 이루어진 프로젝트입니다.
+* 안드로이드 어플리케이션 프로그래머, 서버 프로그래머로 참여하였습니다.
+
+핵심 소스코드
+* 유투브의 동영상을 특정한 쿼리로 검색했을떄의 결과를 보여주고, 동영상 재생도 해주는 부분입니다.
+
+```java
+	// GangwonService.java
+	@GET("/youtube/v3/search?part=snippet&key=" + googleApikey + "&type=video&maxResults=20")
+    Call<ExcerciseVideoResponse> getExcerciseVideoList(@Query("q") String name, @Query("pageToken") String pgToken);
+    
+    // Activity
+     ArrayList<ExcerciseVideoData> arrayList;
+     arrayList = new ArrayList<>();
+        response.enqueue(new Callback<ExcerciseVideoResponse>() {
+            @Override
+            public void onResponse(Response<ExcerciseVideoResponse> response, Retrofit retrofit) {
+                if(response.code()==200){
+                    list = response.body().items;
+                    for(ExcerciseVideoResponse.Items items : list){
+                        arrayList.add(new ExcerciseVideoData(items.snippet.thumbnails.high.url, items.snippet.title, items.snippet.description, items.snippet.channelTitle, items.id.videoId));
+                    }
+                    adapter = new ExcerciseVideoAdapter(ExcerciseVideoListActivity.this, arrayList);
+                    listview.setAdapter(adapter);
+                    loading.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(ExcerciseVideoListActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                loading.dismiss();
+                finish();
+            }
+        });
+```
+
+* 공공데이터에서 데이터를 불러와 해당 위치를 구글 지도에 표시하는 부분입니다. Google Maps API v2가 사용되었습니다.
+
+```java
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_map_show);
+        setActionbar(getSupportActionBar());
+        intent = getIntent();
+        la = Double.parseDouble(intent.getStringExtra("LA"));
+        lo = Double.parseDouble(intent.getStringExtra("LO"));
+        titleText = (TextView) findViewById(R.id.map_title);
+        addressText = (TextView) findViewById(R.id.map_content);
+        titleText.setText(intent.getStringExtra("title"));
+        addressText.setText(intent.getStringExtra("address"));
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        LatLng sydney = new LatLng(lo, la);
+        mMap.addMarker(new MarkerOptions().position(sydney).title(""));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+    }
+
+```
+* 그 외 추억의 사진 공유 기능에는 Multipart, 서버단에서는 multer모듈을 사용하였습니다.
+
+### 제 1회 SW융합 해카톤 대회 GESQUARE
+
+* 스마트폰의 카메라를 이용하여 시각장애인의 눈을 대신하여 사물을 인식하여 음성으로서 시각장애인들에게 시각자료를 청각화 하여 좀 더 안전하게 다닐 수 있도록 한 프로젝트입니다.
+* 안드로이드 클라이언트단에서 작동하는 프로그램입니다..
+* 안드로이드 어플리케이션 프로그래머로 참여하였습니다.
+
+### 단국대 집현전 해커톤 멍냥병원
+
+* 관리가 힘든 특수 반려동물을 위한 의료 서비스로, 특정 반려동물용 병원 검색과 연결 기능 등을 제공합니다.
+* 안드로이드 클라이언트단, Node.JS단 서버의 연동이 이루어진 프로젝트입니다.
+* 안드로이드 어플리케이션 프로그래머로 참여하였습니다.
+
+활동 후기
+=====
+1년동안 여러가지 활동을 하며 많은 경험을 하였습니다. 학기 초반에는 안드로이드와 관련된 지식이 하나도 없어 고생하였지만, 동아리 창설에 힘써주신 창선선배와 다른 친구들의 도움으로 여러가지 배워가며 동아리 내부, 외부 친구들과 많은 대회에 출전하였습니다. 또한, 부부장이란 무거운 직책을 가지고 있기에, 가끔 마찰이 있었으나 알고 있는 최대한의 지식은 수업을 통해 알려주려고 노력하였습니다. 지금까지의 경험을 바탕으로 하여 내년에는 안드로이드뿐만 아닌 다른 분야도 공부할 예정이며, 동아리 수업은 체계화된 교육과정을 구축하고 수업할 예정입니다.
